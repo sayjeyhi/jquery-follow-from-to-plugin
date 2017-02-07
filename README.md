@@ -1,6 +1,6 @@
-# followFromTO
+# followFromTo
 jquery plug in
 
-```jquery
+```javascript
 $(selector).followFromTo("self" , "end");
 ```
