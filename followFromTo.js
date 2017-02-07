@@ -37,9 +37,10 @@ $.fn.followFromTo = function (options) {
             $this = $(this.settings.selector);
         }
 
-
-        this.settings.marginTopFixedHeight = '-'+$this.height();
-
+        if(this.settings.marginTopFixed ){
+            this.settings.marginTopFixedHeight = $this.height() * 2;
+        }
+    
         this.scroll();
     };
 
@@ -66,6 +67,7 @@ $.fn.followFromTo = function (options) {
             }
 
             if($window.scrollTop() < $setting.to && $window.scrollTop() > $setting.from) {
+
                 if($setting.behavior == "class"){
                     $this.addClass($setting.class);
                     
@@ -76,7 +78,11 @@ $.fn.followFromTo = function (options) {
                         top: 0
                     });
                 }
-                $('body').css("margin-top" , $setting.marginTopFixed + "px");
+
+                // add margin top to body
+                if($setting.marginTopFixed){
+                    $('body').css("margin-top" , $setting.marginTopFixedHeight + "px");
+                }
         
             }else if ($window.scrollTop() > $setting.to) {
 
@@ -86,6 +92,7 @@ $.fn.followFromTo = function (options) {
                 });
 
             } else {
+
                 if($setting.behavior == "class"){
                     $this.removeClass($setting.class);
                 }else{
@@ -95,7 +102,12 @@ $.fn.followFromTo = function (options) {
                         top: 0
                     });
                 }
-                $('body').css("margin-top" , 0);
+
+                // remove margin top to body
+                if($setting.marginTopFixed){
+                    $('body').css("margin-top" , 0);
+                }
+
             }
         });
 
