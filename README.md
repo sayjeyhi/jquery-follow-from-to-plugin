@@ -8,6 +8,7 @@ $element.find(".stickWithScroll").followFromTo({
     to: 'end',                        // also can be integer 
     behavior: 'class',                // [class,css]
     class: 'sticky',                  // if behavior is class
-    debug: false                      // debug mode
+    debug: false,                      // debug mode
+    marginTopFixed : -130
 });
 ```
