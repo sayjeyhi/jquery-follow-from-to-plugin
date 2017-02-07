@@ -8,20 +8,41 @@ $.fn.followFromTo = function (options) {
         $window = $(windw);
 
     var defaults = {
+        selector : '',
         from: 'self',       // also can be integer 
         to: 'end',          // also can be integer 
         behavior: 'css',       // [class,css]
         class: '',                  // if behavior is class
-        marginTopFixed : '-'+$this.height(),
-        debug : true 
+        marginTopFixed : true,
+        marginTopFixedHeight : '',
+        debug : false ,
+        disable : false
     };
 
 
     
     this.init = function() {
         this.settings = $.extend({}, defaults, options);
+
+
+        // disable plug in
+        if(this.settings.disable ){
+            this.disable();
+            return false;
+        }
+
+
+        // custum selector
+        if(this.settings.selector !== ''){
+            $this = $(this.settings.selector);
+        }
+
+
+        this.settings.marginTopFixedHeight = '-'+$this.height();
+
         this.scroll();
-    }
+    };
+
 
     this.scroll = function() {
 
@@ -36,9 +57,13 @@ $.fn.followFromTo = function (options) {
 
 
 
-        $window.scroll(function(e){
+        $window.on("scroll" , function(e) {
 
-            if($setting.debug)console.log("Page Scroll : " + $window.scrollTop() + " - FixFrom : " + $setting.from + " - FixTo : " + $setting.to);
+
+            // debug tool
+            if($setting.debug){
+                console.log("Page Scroll : " + $window.scrollTop() + " - FixFrom : " + $setting.from + " - FixTo : " + $setting.to);
+            }
 
             if($window.scrollTop() < $setting.to && $window.scrollTop() > $setting.from) {
                 if($setting.behavior == "class"){
@@ -70,11 +95,16 @@ $.fn.followFromTo = function (options) {
                         top: 0
                     });
                 }
+                $('body').css("margin-top" , 0);
             }
         });
 
-    }
+    };
 
+    this.disable = function() {
+        $window.off("scroll");
+        $this = null ;
+    };
 
     this.init();
 
