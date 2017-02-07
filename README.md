@@ -1,6 +1,13 @@
 # followFromTo
-jquery plug in
+jquery plug in for managing page scroll
 
 ```javascript
-$(selector).followFromTo("self" , "end");
+
+$element.find(".stickWithScroll").followFromTo({
+    from: 'self',                     // also can be integer 
+    to: 'end',                        // also can be integer 
+    behavior: 'class',                // [class,css]
+    class: 'sticky',                  // if behavior is class
+    debug: false                      // debug mode
+});
 ```
