@@ -2,43 +2,51 @@
 var windw = this;
 $.fn.followFromTo = function (options) {
         
-    this.settings = {};
+    $settings = {};
 
     var $this = this,
         $window = $(windw);
 
     var defaults = {
         selector : '',
-        from: 'self',       // also can be integer 
-        to: 'end',          // also can be integer 
+        from: 'self',           // int , self , or data 
+        to: 'end',             // int , self , or data 
         behavior: 'css',       // [class,css]
         class: '',                  // if behavior is class
         marginTopFixed : true,
         marginTopFixedHeight : '',
         debug : false ,
-        disable : false
+        disable : false ,
+        exit : false
     };
 
 
     
     this.init = function() {
-        this.settings = $.extend({}, defaults, options);
-
+        $settings = $.extend({}, defaults, options);
 
         // disable plug in
-        if(this.settings.disable ){
+        if($settings.disable ){
             this.disable();
-            return false;
+
+            if($settings.exit)
+                return false;
         }
 
 
         // custum selector
-        if(this.settings.selector !== ''){
-            $this = $(this.settings.selector);
+        if($settings.selector !== ''){
+            $this = $($settings.selector);
         }
 
-        if(this.settings.marginTopFixed ){
-            this.settings.marginTopFixedHeight = $this.height() * 2;
+        if($settings.marginTopFixed ){
+            $settings.marginTopFixedHeight = $this.height() * 2;
+        }
+
+
+
+        if($settings.marginTopFixed ){
+            $settings.marginTopFixedHeight = $this.height() * 2;
         }
     
         this.scroll();
@@ -47,30 +55,34 @@ $.fn.followFromTo = function (options) {
 
     this.scroll = function() {
 
-        $setting = this.settings;
-
-        if($setting.from == "self"){
-            $setting.from = parseInt($(this).offset().top);
-        }
-        if($setting.to == "end"){
-            $setting.to = parseInt($(document).height());
-        }
 
 
+        $window.off().on("scroll" , function(e) {
 
-        $window.on("scroll" , function(e) {
 
-
-            // debug tool
-            if($setting.debug){
-                console.log("Page Scroll : " + $window.scrollTop() + " - FixFrom : " + $setting.from + " - FixTo : " + $setting.to);
+            if($settings.from == "data" ){
+                $settings.from = $this.attr("data-from");
+            }else if($settings.from == "self"){
+                $settings.from = $this.offset().top;
             }
 
-            if($window.scrollTop() < $setting.to && $window.scrollTop() > $setting.from) {
 
-                if($setting.behavior == "class"){
-                    $this.addClass($setting.class);
-                    
+            if($settings.to == "data" ){
+                $settings.to = $this.attr("data-to");
+            }else if($settings.to == "end"){
+                $settings.to = $(document).height();
+            }
+
+            // debug tool
+            if($settings.debug){
+                console.log("Page Scroll : " + $window.scrollTop() + " - FixFrom : " + $settings.from + " - FixTo : " + $settings.to);
+            }
+
+            if($window.scrollTop() < $settings.to && $window.scrollTop() > $settings.from) {
+
+                if($settings.behavior == "class"){
+                    $this.addClass($settings.class);
+                    $this.removeClass("absoluteMenu");
                 }else{
 
                     $this.css({
@@ -80,23 +92,29 @@ $.fn.followFromTo = function (options) {
                 }
 
                 // add margin top to body
-                if($setting.marginTopFixed){
-                    $('body').css("margin-top" , $setting.marginTopFixedHeight + "px");
+                if($settings.marginTopFixed){
+                    $('body').css("margin-top" , $settings.marginTopFixedHeight + "px");
                 }
         
-            }else if ($window.scrollTop() > $setting.to) {
+            }else if ($window.scrollTop() > $settings.to) {
 
-                $this.css({
-                    position: 'absolute',
-                    top: $setting.to
-                });
+                if($settings.behavior == "class"){
+                    $this.addClass("absoluteMenu");
+                    $this.removeClass($settings.class);
+                }else{
+                    
+                    $this.css({
+                        position: 'absolute',
+                        top: $settings.to
+                    });
+                }
+
 
             } else {
 
-                if($setting.behavior == "class"){
-                    $this.removeClass($setting.class);
+                if($settings.behavior == "class"){
+                    $this.removeClass($settings.class + " absoluteMenu");
                 }else{
-
                     $this.css({
                         position: 'static',
                         top: 0
@@ -104,7 +122,7 @@ $.fn.followFromTo = function (options) {
                 }
 
                 // remove margin top to body
-                if($setting.marginTopFixed){
+                if($settings.marginTopFixed){
                     $('body').css("margin-top" , 0);
                 }
 
@@ -115,7 +133,6 @@ $.fn.followFromTo = function (options) {
 
     this.disable = function() {
         $window.off("scroll");
-        $this = null ;
     };
 
     this.init();
