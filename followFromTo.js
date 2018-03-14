@@ -1,4 +1,7 @@
-
+/**
+* @author : jafar rezaei
+* @website : http://www.jrjs.ir
+*/
 var windw = this;
 $.fn.followFromTo = function (options) {
         
